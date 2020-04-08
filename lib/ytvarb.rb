@@ -3,6 +3,7 @@
 
 require 'active_record'
 require 'yaml'
+require 'fileutils'
 
 require File.expand_path(File.dirname(__FILE__) + '/ytvarb/configure')
 require File.expand_path(File.dirname(__FILE__) + '/ytvarb/youtube_data_api')
@@ -35,22 +36,4 @@ module Ytvarb
 			end
 		end
 	end
-end
-
-if $0 == __FILE__
-
-	require 'pp'
-
-	env = 'development'
-
-	video_id = 'NypEG5G1EyM'
-
-	Ytvarb.initialize(env, video_id)
-
-	max_results = 2
-	next_page_token = ''
-
-	comment_thread = Ytvarb::YoutubeDataApi::CommentThread.new(max_results)
-	pp comment_thread
-
 end

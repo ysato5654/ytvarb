@@ -55,13 +55,25 @@ module Ytvarb
 
 				youtube.key = auth_key
 
-				youtube_comment_threads_list = youtube.list_comment_threads(
+				response = youtube.list_comment_threads(
 					PART_LIMITATION[2], # snippet
 					max_results: max_results, 
 					order: ORDER_LIMITATION[0], # time
 					page_token: page_token, 
 					text_format: TEXT_FORMAT_LIMITATION[1], # plainText
 					video_id: video_id)
+
+				@response = response.to_h
+			end
+
+			private
+			def to_h
+				keys = instance_variables.flat_map do |val_name| 
+					getter_name = val_name[1..-1]
+					respond_to?(getter_name) ? getter_name : []
+				end
+
+				keys.map { |key| [key.to_sym, public_send(key)] }.to_h
 			end
 		end
 	end
