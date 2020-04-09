@@ -1,7 +1,8 @@
 # ytvarb
 
 ytvarb is Ruby library for YouTube Video Analytics.
-The library accesses YouTube Data API v3 and COTOHA API.
+
+The library uses the service of YouTube Data API v3 and COTOHA API both.
 
 ## Setup
 
