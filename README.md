@@ -29,7 +29,7 @@ $ bundle install
 
 or
 
-manually installby yourself
+manually install by yourself
 
 ## DB (Data Base)
 
