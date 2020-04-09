@@ -43,17 +43,17 @@ module Ytvarb
 				#	STDERR.puts "#{__FILE__}:#{__LINE__}:Warning: out of limitation. currently support language are '#{TEXT_FORMAT_LIMITATION.join("' or '")}'."
 				#end
 
-				auth_key = ''
+				api_key = ''
 				video_id = nil
 
 				Ytvarb.configure do |config|
-					auth_key = config.auth_key
+					api_key = config.api_key
 					video_id = config.video_id
 				end
 
 				youtube = Google::Apis::YoutubeV3::YouTubeService.new
 
-				youtube.key = auth_key
+				youtube.key = api_key
 
 				response = youtube.list_comment_threads(
 					PART_LIMITATION[2], # snippet

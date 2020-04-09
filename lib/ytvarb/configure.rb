@@ -5,7 +5,7 @@ module Ytvarb
 	module Configure
 		CONFIG = [
 			:environment, 
-			:auth_key, 
+			:api_key, 
 			:time_zone, 
 			:year, 
 			:month, 
@@ -25,7 +25,7 @@ module Ytvarb
 
 		def reset
 			self.environment = ''
-			self.auth_key    = ''
+			self.api_key     = ''
 			self.time_zone   = 'Tokyo'
 			self.year        = ''
 			self.month       = ''
