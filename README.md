@@ -31,6 +31,12 @@ or
 
 manually install by yourself
 
+## Usage
+
+```
+$ ruby ruby youtube_video_analytics.rb -v [VIDEO ID]
+```
+
 ## DB (Data Base)
 
 ### Directory structure
@@ -54,7 +60,7 @@ Here is for developer
 ```
 /										  
 ├─	/app								  
-│	└─	get_comment.rb					  
+│	└─	youtube_video_analysis.rb		  
 ├─	/bin								  
 ├─	/config								  
 │	├─	api_key.txt						  
@@ -63,9 +69,11 @@ Here is for developer
 ├─	/lib								  
 │	├─	/ytvarb							  
 │	│	├─	models						  
-│	│	│	└─	comment_threads.rb		  
+│	│	│	├─	comment.rb				  
+│	│	│	└─	comment_thread.rb		  
 │	│	├─	model.rb					  
 │	│	├─	configure.rb				  
+│	│	├─	youtube_comment.rb			  
 │	│	├─	youtube_data_api.rb			  
 │	│	└─	version.rb					  
 │	└─	ytvarb.rb						  
