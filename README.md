@@ -16,14 +16,14 @@ The library uses the service of YouTube Data API v3 and COTOHA API both.
 
   Need to register for COTOHA API
 
-2. Create 'api_key.txt', 'cliend_id.txt' and 'cliend_secret.txt' file newly into config/ directory, then save got key and id.
+2. Create 'api_key.txt', 'client_id.txt' and 'client_secret.txt' file newly into config/ directory, then save got key and id.
 
 3. Install some need ruby library
 
 - google-api-client
 - cotoha
 
-```rb
+```
 $ bundle install
 ```
 
