@@ -1,0 +1,5 @@
+/db/
+/log/
+
+# It must be ignored
+config/api_key.txt
