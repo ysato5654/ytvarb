@@ -55,8 +55,8 @@ module Ytvarb
 			max_results = 100
 			next_page_token = ''
 
-			loop_num = 0
-			loop do
+			10.times do |i|
+
 				# get comment
 				api = Ytvarb::YoutubeDataApi::CommentThread.new(max_results, next_page_token)
 
@@ -91,10 +91,6 @@ module Ytvarb
 				end
 
 				next_page_token = response[:next_page_token]
-
-				break if loop_num > 10
-
-				loop_num += 1
 
 			end
 
