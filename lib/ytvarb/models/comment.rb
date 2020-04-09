@@ -16,7 +16,7 @@ module Ytvarb
 					t.string   :author_display_name, :null => false
 					t.string   :author_profile_image_url, :null => false
 					t.string   :author_channel_url, :null => false
-					t.string   :author_channel_id, :null => false
+					t.string   :author_channel_id, :null => true
 					t.string   :channel_id, :null => true
 					t.string   :video_id, :null => false
 					t.string   :text_display, :null => false
