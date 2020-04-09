@@ -12,7 +12,7 @@ module Ytvarb
 		YOUTUBE_API_VERSION = 'v3'
 
 		class CommentThread
-			attr_reader :response
+			attr_reader :response, :error
 
 			PREFIX_URL = 'commentThreads'
 
@@ -30,6 +30,7 @@ module Ytvarb
 
 			def initialize max_results = DEFAULT_RESULTS, page_token = ''
 				@response = Hash.new
+				@error = Hash.new
 
 				unless max_results >= LOWER_MAX_RESULTS and max_results <= UPPER_MAX_RESULTS
 					STDERR.puts "#{__FILE__}:#{__LINE__}:Warning: out of limitation. max results range is #{LOWER_MAX_RESULTS} ~ #{UPPER_MAX_RESULTS}."
@@ -55,15 +56,23 @@ module Ytvarb
 
 				youtube.key = api_key
 
-				response = youtube.list_comment_threads(
-					PART_LIMITATION[2], # snippet
-					max_results: max_results, 
-					order: ORDER_LIMITATION[0], # time
-					page_token: page_token, 
-					text_format: TEXT_FORMAT_LIMITATION[1], # plainText
-					video_id: video_id)
+				begin
+					response = youtube.list_comment_threads(
+						PART_LIMITATION[2], # snippet
+						max_results: max_results, 
+						order: ORDER_LIMITATION[0], # time
+						page_token: page_token, 
+						text_format: TEXT_FORMAT_LIMITATION[1], # plainText
+						video_id: video_id)
 
-				@response = response.to_h
+					@response = response.to_h
+
+				rescue Exception => e
+					@error[:class] = e.class.to_s
+					@error[:detail] = e.message.split(':').first
+					@error[:message] = e.message.split(':').last.strip
+					@error[:type] = e.status_code
+				end
 			end
 
 			private
