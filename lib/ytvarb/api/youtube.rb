@@ -16,6 +16,10 @@ module Ytvarb
 				@video_id = video_id
 			end
 
+			def is_error?
+				!@error.empty?
+			end
+
 			def comment_threads page_token = ''
 
 				youtube = Google::Apis::YoutubeV3::YouTubeService.new

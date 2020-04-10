@@ -64,22 +64,26 @@ module Ytvarb
 
 			10.times do |i|
 
-				# get comment
+				# get comment from youtube video
 				youtube_api.comment_threads(next_page_token)
 
-				# response is error, then break
-				unless youtube_api.error.empty?
+				# response is error -> finish process
+				if youtube_api.is_error?
 
 					error = youtube_api.error
 
 					@logger.error {
-						"#{error[:class]}" + "\n" +
+						"youtube api error" + "\n" +
+						INDENT + "class = #{error[:class]}" + "\n" +
 						INDENT + "detail = #{error[:detail]}" + "\n" +
 						INDENT + "message = #{error[:message]}" + "\n" +
 						INDENT + "type = #{error[:type]}"
 					}
 
 					STDERR.puts "#{__FILE__}:#{__LINE__}:Error: #{error[:class]} #{error[:detail]}"
+
+					@logger.debug { "page_token = #{next_page_token}" }
+					@logger.debug { "loop = #{i}" }
 
 					status = false
 					break
@@ -92,7 +96,8 @@ module Ytvarb
 				@logger.debug { "total_results = #{response[:page_info][:total_results]}" }
 				@logger.debug { "results_per_page = #{response[:page_info][:results_per_page]}" }
 
-				unless update_database(response)
+				# create record and save
+				unless insert_comment_thread_record(response[:items])
 					status = false
 					break
 				end
@@ -111,71 +116,74 @@ module Ytvarb
 		end
 
 		private
-		def update_database response
-			response[:items].each{ |comment_thread|
+		def insert_comment_thread_record comment_thread_list
+			comment_thread_list.each{ |comment_thread|
 
+				# rename key (:id -> :comment_thread_id)
 				if comment_thread.rename_key(old: :id, new: :comment_thread_id).nil?
 					@logger.fatal { "#{File.basename(__FILE__)}:#{__LINE__}" }
 					STDERR.puts "#{__FILE__}:#{__LINE__}:Fatal Error"
 
+					@logger.debug { "comment_thread = #{comment_thread}" }
+
 					return false
 				end
 
-				# update database
-				if Model::CommentThread.find_by(:comment_thread_id => comment_thread[:comment_thread_id]).nil?
+				comment = comment_thread[:snippet][:top_level_comment]
 
-					comment = comment_thread[:snippet][:top_level_comment]
+				# rename key (:id -> :comment_id)
+				if comment.rename_key(old: :id, new: :comment_id).nil?
+					@logger.fatal { "#{File.basename(__FILE__)}:#{__LINE__}" }
+					STDERR.puts "#{__FILE__}:#{__LINE__}:Fatal Error"
 
-					if comment.rename_key(old: :id, new: :comment_id).nil?
-						@logger.fatal { "#{File.basename(__FILE__)}:#{__LINE__}" }
-						STDERR.puts "#{__FILE__}:#{__LINE__}:Fatal Error"
+					@logger.debug { "comment = #{comment}" }
 
-						return false
-					end
+					return false
+				end
 
-					if comment[:snippet][:author_channel_id].nil?
+				if comment[:snippet][:author_channel_id].nil?
+					author_channel_id = nil
+				else
+					if comment[:snippet][:author_channel_id][:value].nil?
 						author_channel_id = nil
 					else
-						if comment[:snippet][:author_channel_id][:value].nil?
-							author_channel_id = nil
-						else
-							author_channel_id = comment[:snippet][:author_channel_id][:value]
-						end
+						author_channel_id = comment[:snippet][:author_channel_id][:value]
 					end
-
-					comment_db = Model::Comment.create(
-														:kind => comment[:kind], 
-														:etag => comment[:etag], 
-														:comment_id => comment[:comment_id], 
-														:author_display_name => comment[:snippet][:author_display_name], 
-														:author_profile_image_url => comment[:snippet][:author_profile_image_url], 
-														:author_channel_url => comment[:snippet][:author_channel_url], 
-														:author_channel_id => author_channel_id.nil? ? :null : author_channel_id, 
-														:channel_id => comment[:snippet][:channel_id].nil? ? :null : comment[:snippet][:channel_id], 
-														:video_id => comment[:snippet][:video_id], 
-														:text_display => comment[:snippet][:text_display], 
-														:text_original => comment[:snippet][:text_original], 
-														:parent_id => comment[:snippet][:parent_id].nil? ? :null : comment[:snippet][:parent_id], 
-														:can_rate => comment[:snippet][:can_rate], 
-														:viewer_rating => comment[:snippet][:viewer_rating], 
-														:like_count => comment[:snippet][:like_count], 
-														:moderation_status => comment[:snippet][:moderation_status].nil? ? :null : comment[:snippet][:moderation_status], 
-														:published_at => comment[:snippet][:published_at], 
-														:updated_at => comment[:snippet][:updated_at]
-													)
-
-					Model::CommentThread.create(
-												:kind => comment_thread[:kind], 
-												:etag => comment_thread[:etag], 
-												:comment_thread_id => comment_thread[:comment_thread_id], 
-												:channel_id => comment_thread[:snippet][:channel_id].nil? ? :null : comment_thread[:snippet][:channel_id], 
-												:video_id => comment_thread[:snippet][:video_id], 
-												:can_reply => comment_thread[:snippet][:can_reply], 
-												:total_reply_count => comment_thread[:snippet][:total_reply_count], 
-												:is_public => comment_thread[:snippet][:is_public], 
-												:comments_db_id => comment_db.id
-											)
 				end
+
+				comment_db = Model::Comment.find_or_create_by(:comment_id => comment[:comment_id]) do |comments|
+					comments.kind = comment[:kind]
+					comments.etag = comment[:etag]
+					#comments.comment_id = comment[:comment_id], 
+					comments.author_display_name = comment[:snippet][:author_display_name]
+					comments.author_profile_image_url = comment[:snippet][:author_profile_image_url]
+					comments.author_channel_url = comment[:snippet][:author_channel_url]
+					comments.author_channel_id = author_channel_id.nil? ? :null : author_channel_id
+					comments.channel_id = comment[:snippet][:channel_id].nil? ? :null : comment[:snippet][:channel_id]
+					comments.video_id = comment[:snippet][:video_id]
+					comments.text_display = comment[:snippet][:text_display]
+					comments.text_original = comment[:snippet][:text_original]
+					comments.parent_id = comment[:snippet][:parent_id].nil? ? :null : comment[:snippet][:parent_id]
+					comments.can_rate = comment[:snippet][:can_rate]
+					comments.viewer_rating = comment[:snippet][:viewer_rating]
+					comments.like_count = comment[:snippet][:like_count]
+					comments.moderation_status = comment[:snippet][:moderation_status].nil? ? :null : comment[:snippet][:moderation_status]
+					comments.published_at = comment[:snippet][:published_at]
+					comments.updated_at = comment[:snippet][:updated_at]
+				end
+
+				Model::CommentThread.find_or_create_by(:comment_thread_id => comment_thread[:comment_thread_id]) do |comment_threads|
+					comment_threads.kind = comment_thread[:kind]
+					comment_threads.etag = comment_thread[:etag]
+					#comment_threads.comment_thread_id = comment_thread[:comment_thread_id]
+					comment_threads.channel_id = comment_thread[:snippet][:channel_id].nil? ? :null : comment_thread[:snippet][:channel_id]
+					comment_threads.video_id = comment_thread[:snippet][:video_id]
+					comment_threads.can_reply = comment_thread[:snippet][:can_reply]
+					comment_threads.total_reply_count = comment_thread[:snippet][:total_reply_count]
+					comment_threads.is_public = comment_thread[:snippet][:is_public]
+					comment_threads.comments_db_id = comment_db.id
+				end
+
 			}
 
 			return true
