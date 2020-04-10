@@ -131,6 +131,8 @@ module Ytvarb
 			# load comment from database
 			Model::Comment.find_each do |comment|
 
+				next if !Model::Sentiment.find_by(:comment_id => comment[:comment_id]).nil?
+
 				# analyze youtube comment
 				cotoha_api.sentiment(comment[:text_original])
 
@@ -148,9 +150,10 @@ module Ytvarb
 				Model::Sentiment.find_or_create_by(:comment_id => comment[:comment_id]) do |_sentiment|
 					_sentiment.sentiment        = response[:result][:sentiment]
 					_sentiment.score            = response[:result][:score]
-					_sentiment.emotional_phrase = response[:result][:emotional_phrase].to_s
+					_sentiment.emotional_phrase = response[:result][:emotional_phrase]
 				end
 
+				sleep(10)
 			end
 
 			return status
