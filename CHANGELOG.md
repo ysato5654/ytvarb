@@ -1,3 +1,8 @@
+## v0.1.2
+[full changelog](http://github.com/ysato5654/ytvarb/compare/v0.1.1...v0.1.2)
+
+* Minor update to improve software quality
+
 ## v0.1.1
 [full changelog](http://github.com/ysato5654/ytvarb/compare/v0.1.0...v0.1.1)
 
