@@ -34,6 +34,8 @@ module Ytvarb
 					"configure" + "\n" +
 					INDENT + "environment = #{config.environment}" + "\n" +
 					INDENT + "api_key = #{config.api_key}" + "\n" +
+					INDENT + "client_id = #{config.client_id}" + "\n" +
+					INDENT + "client_secret = #{config.client_secret}" + "\n" +
 					INDENT + "time_zone = #{config.time_zone}" + "\n" +
 					INDENT + "year = #{config.year}" + "\n" +
 					INDENT + "month = #{config.month}" + "\n" +
@@ -112,7 +114,46 @@ module Ytvarb
 		end
 
 		def analyze
-			return false
+			status = true
+
+			client_id = ''
+			client_secret = ''
+			video_id = nil
+
+			Ytvarb.configure do |config|
+				client_id = config.client_id
+				client_secret = config.client_secret
+				video_id = config.video_id
+			end
+
+			cotoha_api = Ytvarb::Api::Cotohaha.new(client_id, client_secret)
+
+			# load comment from database
+			Model::Comment.find_each do |comment|
+
+				# analyze youtube comment
+				cotoha_api.sentiment(comment[:text_original])
+
+				# response is error -> finish process
+				if cotoha_api.is_error?
+					STDERR.puts "#{__FILE__}:#{__LINE__}:Error: #{cotoha_api.response[:status]} #{cotoha_api.response[:message]}"
+
+					status = false
+					break
+				end
+
+				response = cotoha_api.response
+
+				# create record and save if not found
+				Model::Sentiment.find_or_create_by(:comment_id => comment[:comment_id]) do |_sentiment|
+					_sentiment.sentiment        = response[:result][:sentiment]
+					_sentiment.score            = response[:result][:score]
+					_sentiment.emotional_phrase = response[:result][:emotional_phrase].to_s
+				end
+
+			end
+
+			return status
 		end
 
 		private

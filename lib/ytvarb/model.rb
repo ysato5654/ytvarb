@@ -31,5 +31,6 @@ module Ytvarb
 
 		require File.expand_path(File.dirname(__FILE__) + '/models/comment')
 		require File.expand_path(File.dirname(__FILE__) + '/models/comment_thread')
+		require File.expand_path(File.dirname(__FILE__) + '/models/sentiment')
 	end
 end
