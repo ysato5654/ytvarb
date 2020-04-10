@@ -1,8 +1,8 @@
 # ytvarb
 
-ytvarb is Ruby library for YouTube Video Analytics.
+ytvarb is Ruby library to analyze comment of YouTube video.
 
-The library uses the service of YouTube Data API v3 and COTOHA API both.
+The library uses the service of [YouTube Data API v3](https://developers.google.com/youtube/v3) and [COTOHA API](https://api.ce-cotoha.com/contents/index.html) both.
 
 ## Setup
 
