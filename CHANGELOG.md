@@ -1,3 +1,8 @@
+## v0.2.0
+[full changelog](http://github.com/ysato5654/ytvarb/compare/v0.1.2...v0.2.0)
+
+* This version support analysis of youtube video comment
+
 ## v0.1.2
 [full changelog](http://github.com/ysato5654/ytvarb/compare/v0.1.1...v0.1.2)
 
