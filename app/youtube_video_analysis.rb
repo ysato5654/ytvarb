@@ -45,14 +45,13 @@ def youtube_video_analysis
 	end
 
 	# analyze youtube comment
-	#youtube_comment.analyze
+	unless youtube_comment.analyze
+		return
+	end
 
 end
 
 if $0 == __FILE__
-
-	# DEBUG
-	video_id = 'NypEG5G1EyM'
 
 	youtube_video_analysis
 
