@@ -3,8 +3,6 @@
 
 require 'optparse'
 
-require 'pp'
-
 require File.expand_path(File.dirname(__FILE__) + '/../lib/ytvarb')
 
 DEFAULT_ENVIRONMENT = 'production'
