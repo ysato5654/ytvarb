@@ -3,3 +3,5 @@
 
 # It must be ignored
 config/api_key.txt
+config/client_id.txt
+config/client_secret.txt

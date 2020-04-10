@@ -22,6 +22,8 @@ module Ytvarb
 			Ytvarb.configure do |config|
 				config.environment = env
 				config.api_key = File.read(ROOT_PATH + '/config/api_key.txt')
+				config.client_id = File.read(ROOT_PATH + '/config/client_id.txt')
+				config.client_secret = File.read(ROOT_PATH + '/config/client_secret.txt')
 				config.time_zone = 'Tokyo'
 
 				ActiveRecord::Base
