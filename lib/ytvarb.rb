@@ -4,7 +4,7 @@
 require 'active_record'
 
 require File.expand_path(File.dirname(__FILE__) + '/ytvarb/configure')
-require File.expand_path(File.dirname(__FILE__) + '/ytvarb/youtube_data_api')
+require File.expand_path(File.dirname(__FILE__) + '/ytvarb/api/youtube')
 require File.expand_path(File.dirname(__FILE__) + '/ytvarb/youtube_comment')
 require File.expand_path(File.dirname(__FILE__) + '/ytvarb/version')
 

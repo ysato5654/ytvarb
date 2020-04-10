@@ -48,22 +48,29 @@ module Ytvarb
 		def get
 			status = true
 
+			api_key = ''
+			video_id = nil
+
 			Ytvarb.configure do |config|
-				@logger.info { "video id = #{config.video_id}" }
+				api_key = config.api_key
+				video_id = config.video_id
 			end
 
-			max_results = 100
+			@logger.info { "video id = #{video_id}" }
+
+			youtube_api = Ytvarb::Api::Youtube.new(api_key, video_id)
+
 			next_page_token = ''
 
 			10.times do |i|
 
 				# get comment
-				api = Ytvarb::YoutubeDataApi::CommentThread.new(max_results, next_page_token)
+				youtube_api.comment_threads(next_page_token)
 
 				# response is error, then break
-				unless api.error.empty?
+				unless youtube_api.error.empty?
 
-					error = api.error
+					error = youtube_api.error
 
 					@logger.error {
 						"#{error[:class]}" + "\n" +
@@ -78,7 +85,7 @@ module Ytvarb
 					break
 				end
 
-				response = api.response
+				response = youtube_api.response
 
 				@logger.info { "etag = #{response[:etag]}" }
 				@logger.info { "next_page_token = #{response[:next_page_token]}" }
