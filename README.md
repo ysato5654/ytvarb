@@ -64,17 +64,22 @@ Here is for developer
 ├─	/bin								  
 ├─	/config								  
 │	├─	api_key.txt						  
+│	├─	client_id.txt					  
+│	├─	client_secret.txt				  
 │	└─	database.yml					  
 ├─	/db									  
 ├─	/lib								  
 │	├─	/ytvarb							  
+│	│	├─	api							  
+│	│	│	├─	cotohaha.rb				  
+│	│	│	└─	youtube.rb				  
 │	│	├─	models						  
 │	│	│	├─	comment.rb				  
-│	│	│	└─	comment_thread.rb		  
+│	│	│	├─	comment_thread.rb		  
+│	│	│	└─	sentiment.rb			  
 │	│	├─	model.rb					  
 │	│	├─	configure.rb				  
 │	│	├─	youtube_comment.rb			  
-│	│	├─	youtube_data_api.rb			  
 │	│	└─	version.rb					  
 │	└─	ytvarb.rb						  
 ├─	/log								  
