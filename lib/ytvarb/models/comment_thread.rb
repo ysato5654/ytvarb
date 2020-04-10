@@ -22,8 +22,6 @@ module Ytvarb
 
 					# replies
 					# => not supported at current version
-
-					t.timestamps
 				end
 			end
 		end

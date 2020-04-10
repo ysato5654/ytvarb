@@ -28,8 +28,6 @@ module Ytvarb
 					t.string   :moderation_status, :null => true
 					t.datetime :published_at, :null => false
 					t.datetime :updated_at, :null => false
-
-					t.timestamps
 				end
 			end
 		end
