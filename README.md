@@ -34,7 +34,7 @@ manually install by yourself
 ## Usage
 
 ```
-$ ruby youtube_video_analytics.rb -v [VIDEO ID]
+$ ruby youtube_video_analytics.rb --video_id [VIDEO ID]
 ```
 
 ## DB (Data Base)
