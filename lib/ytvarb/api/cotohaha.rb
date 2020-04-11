@@ -21,9 +21,30 @@ module Ytvarb
 			end
 
 			def sentiment sentence
-				@response = @client.sentiment(sentence: sentence)
+				begin
+					@response = @client.sentiment(sentence: sentence)
 
-				recursive_symbolize_keys!(@response)
+					recursive_symbolize_keys!(@response)
+
+				rescue Exception => e
+					message = e.message.split(/\s\-\s/).last.slice(1..-2)
+
+					message.split(/\,\s/).each { |response|
+						key = response.split('=>').first
+						value = response.split('=>').last
+
+						if key =~ /result/ and value =~ /\{\}/
+							@response[:result] = {}
+						elsif key =~ /message/
+							@response[:message] = value
+						elsif key =~ /status/
+							@response[:status] = value.to_i
+						else
+							STDERR.puts "#{__FILE__}:#{__LINE__}:Fatal Error"
+							exit(0)
+						end
+					}
+				end
 			end
 
 			private
