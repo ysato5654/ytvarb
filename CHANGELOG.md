@@ -1,3 +1,8 @@
+## v0.2.1
+[full changelog](http://github.com/ysato5654/ytvarb/compare/v0.2.0...v0.2.1)
+
+* Fix potential issue (tentative solution)
+
 ## v0.2.0
 [full changelog](http://github.com/ysato5654/ytvarb/compare/v0.1.2...v0.2.0)
 
