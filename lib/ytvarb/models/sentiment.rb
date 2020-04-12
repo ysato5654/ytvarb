@@ -6,9 +6,9 @@ module Ytvarb
 		class Sentiment < ActiveRecord::Base
 			establish_connection(CONN)
 
-			unless connection.table_exists?('sentiments')
-				serialize :emotional_phrase
+			serialize :emotional_phrase
 
+			unless connection.table_exists?('sentiments')
 				connection.create_table(:sentiments, force: true) do |t|
 					t.string  :sentiment, :null => false
 					t.decimal :score, :null => false
