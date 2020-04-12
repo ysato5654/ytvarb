@@ -1,3 +1,9 @@
+## v0.2.2
+[full changelog](http://github.com/ysato5654/ytvarb/compare/v0.2.1...v0.2.2)
+
+* Fix bug
+	- serialize error in case of already table exist
+
 ## v0.2.1
 [full changelog](http://github.com/ysato5654/ytvarb/compare/v0.2.0...v0.2.1)
 
