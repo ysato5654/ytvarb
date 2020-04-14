@@ -126,7 +126,12 @@ module Ytvarb
 				next if !Model::Sentiment.find_by(:comment_id => comment[:comment_id]).nil?
 
 				# analyze youtube comment
-				cotoha_api.sentiment(comment[:text_original])
+				begin
+					cotoha_api.sentiment(comment[:text_original])
+				rescue Cotoha::Error => e
+					STDERR.puts "#{__FILE__}:#{__LINE__}:Error: #{e.message}"
+					next
+				end
 
 				# response is error -> finish process
 				if cotoha_api.is_error?
