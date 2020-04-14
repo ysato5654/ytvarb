@@ -16,9 +16,9 @@ module Ytvarb
 		database = yaml[environment]['database']
 
 		Ytvarb.configure do |config|
-			database.gsub!(/year/, config.year.to_s)
-			database.gsub!(/month/, config.month.to_s.rjust(2, '0'))
-			database.gsub!(/day/, config.day.to_s.rjust(2, '0'))
+			#database.gsub!(/year/, config.year.to_s)
+			#database.gsub!(/month/, config.month.to_s.rjust(2, '0'))
+			#database.gsub!(/day/, config.day.to_s.rjust(2, '0'))
 			database.gsub!(/video_id/, config.video_id)
 		end
 
