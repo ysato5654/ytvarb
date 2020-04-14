@@ -67,23 +67,15 @@ module Ytvarb
 			10.times do |i|
 
 				# get comment from youtube video
-				youtube_api.comment_threads(next_page_token)
+				begin
+					youtube_api.comment_threads(next_page_token)
 
-				# response is error -> finish process
-				if youtube_api.is_error?
+				rescue Google::Apis::ServerError, Google::Apis::ClientError, Google::Apis::AuthorizationError => e
+					@logger.error { "#{e.class} #{e.message.split(':').first}" }
 
-					error = youtube_api.error
+					STDERR.puts "#{__FILE__}:#{__LINE__}:Error: #{e.class} #{e.message.split(':').first}"
 
-					@logger.error {
-						"youtube api error" + "\n" +
-						INDENT + "class = #{error[:class]}" + "\n" +
-						INDENT + "detail = #{error[:detail]}" + "\n" +
-						INDENT + "message = #{error[:message]}" + "\n" +
-						INDENT + "type = #{error[:type]}"
-					}
-
-					STDERR.puts "#{__FILE__}:#{__LINE__}:Error: #{error[:class]} #{error[:detail]}"
-
+					@logger.debug { e }
 					@logger.debug { "page_token = #{next_page_token}" }
 					@logger.debug { "loop = #{i}" }
 
