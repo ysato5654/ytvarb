@@ -64,17 +64,21 @@ def youtube_video_analysis
 
 	# get comment from youtube video
 	if params[:get]
-		STDOUT.puts "get youtube comment"
-		STDOUT.puts
+		STDOUT.print "get youtube comment"
 
 		begin
-			unless youtube_comment.get
-				return
-			end
-		rescue Exception => e
+			youtube_comment.get
+		rescue Ytvarb::ApiFormatError => e
+			STDOUT.puts
 			STDERR.puts "#{__FILE__}:#{__LINE__}:Error: #{e}: need to contact the ytvarb developers"
 			return
+		rescue Exception => e
+			STDOUT.puts
+			STDERR.puts "#{__FILE__}:#{__LINE__}:Error: #{e.class}: #{e.message}"
+			return
 		end
+
+		STDOUT.puts
 	end
 
 	# analyze youtube comment

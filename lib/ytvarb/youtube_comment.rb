@@ -3,9 +3,9 @@
 
 require 'fileutils'
 require 'logger'
+require 'google/apis/youtube_v3'
 
-require File.expand_path(File.dirname(__FILE__) + '/api/cotohaha')
-require File.expand_path(File.dirname(__FILE__) + '/api/youtube')
+#require File.expand_path(File.dirname(__FILE__) + '/api/cotohaha')
 
 module Ytvarb
 	class YoutubeComment
@@ -51,45 +51,28 @@ module Ytvarb
 		end
 
 		def get
-			status = true
+			@logger.info { "get youtube comment" }
 
-			api_key = ''
+			youtube = Google::Apis::YoutubeV3::YouTubeService.new
+
 			video_id = nil
-
 			Ytvarb.configure do |config|
-				api_key = config.api_key
+				# set api key
+				youtube.key = config.api_key
+
 				video_id = config.video_id
 			end
-
-			@logger.info { "get youtube comment - video id = #{video_id}" }
-
-			youtube_api = Ytvarb::Api::Youtube.new(api_key, video_id)
 
 			next_page_token = ''
 
 			10.times do |i|
 
 				# get comment from youtube video
-				begin
-					youtube_api.comment_threads(next_page_token)
+				response = youtube.list_comment_threads('snippet', max_results: 100, order: 'time', page_token: next_page_token, text_format: 'plainText', video_id: video_id)
+				response = response.to_h
 
-				rescue Google::Apis::ServerError, Google::Apis::ClientError, Google::Apis::AuthorizationError => e
-					@logger.error { "#{e.class} #{e.message.split(':').first}" }
-
-					STDERR.puts "#{__FILE__}:#{__LINE__}:Error: #{e.class} #{e.message.split(':').first}"
-
-					@logger.debug { e }
-					@logger.debug { "page_token = #{next_page_token}" }
-					@logger.debug { "loop = #{i}" }
-
-					status = false
-					break
-				end
-
-				response = youtube_api.response
-
-				@logger.info { "etag = #{response[:etag]}" }
-				@logger.info { "next_page_token = #{response[:next_page_token]}" }
+				@logger.debug { "etag = #{response[:etag]}" }
+				@logger.debug { "next_page_token = #{response[:next_page_token]}" }
 				@logger.debug { "total_results = #{response[:page_info][:total_results]}" }
 				@logger.debug { "results_per_page = #{response[:page_info][:results_per_page]}" }
 
@@ -98,11 +81,11 @@ module Ytvarb
 
 				next_page_token = response[:next_page_token]
 
+				STDOUT.print '.'
+
 			end
 
 			@logger.close
-
-			return status
 		end
 
 		def analyze
@@ -157,6 +140,15 @@ module Ytvarb
 		end
 
 		private
+
+		def to_h
+			keys = instance_variables.flat_map do |val_name| 
+				getter_name = val_name[1..-1]
+				respond_to?(getter_name) ? getter_name : []
+			end
+
+			keys.map { |key| [key.to_sym, public_send(key)] }.to_h
+		end
 
 		# Insert comment thread (response data from youtube api) to database.
 		# @param [Array] comment_thread_list
