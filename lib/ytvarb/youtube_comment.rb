@@ -193,36 +193,34 @@ module Ytvarb
 				end
 
 				comment_db = Model::Comment.find_or_create_by(:comment_id => comment[:comment_id]) do |comments|
-					comments.kind = comment[:kind]
-					comments.etag = comment[:etag]
-					#comments.comment_id = comment[:comment_id], 
-					comments.author_display_name = comment[:snippet][:author_display_name]
+					comments.kind                     = comment[:kind]
+					comments.etag                     = comment[:etag]
+					comments.author_display_name      = comment[:snippet][:author_display_name]
 					comments.author_profile_image_url = comment[:snippet][:author_profile_image_url]
-					comments.author_channel_url = comment[:snippet][:author_channel_url]
-					comments.author_channel_id = author_channel_id.nil? ? :null : author_channel_id
-					comments.channel_id = comment[:snippet][:channel_id].nil? ? :null : comment[:snippet][:channel_id]
-					comments.video_id = comment[:snippet][:video_id]
-					comments.text_display = comment[:snippet][:text_display]
-					comments.text_original = comment[:snippet][:text_original]
-					comments.parent_id = comment[:snippet][:parent_id].nil? ? :null : comment[:snippet][:parent_id]
-					comments.can_rate = comment[:snippet][:can_rate]
-					comments.viewer_rating = comment[:snippet][:viewer_rating]
-					comments.like_count = comment[:snippet][:like_count]
-					comments.moderation_status = comment[:snippet][:moderation_status].nil? ? :null : comment[:snippet][:moderation_status]
-					comments.published_at = comment[:snippet][:published_at]
-					comments.updated_at = comment[:snippet][:updated_at]
+					comments.author_channel_url       = comment[:snippet][:author_channel_url]
+					comments.author_channel_id        = author_channel_id.nil? ? :null : author_channel_id
+					comments.channel_id               = comment[:snippet][:channel_id].nil? ? :null : comment[:snippet][:channel_id]
+					comments.video_id                 = comment[:snippet][:video_id]
+					comments.text_display             = comment[:snippet][:text_display]
+					comments.text_original            = comment[:snippet][:text_original]
+					comments.parent_id                = comment[:snippet][:parent_id].nil? ? :null : comment[:snippet][:parent_id]
+					comments.can_rate                 = comment[:snippet][:can_rate]
+					comments.viewer_rating            = comment[:snippet][:viewer_rating]
+					comments.like_count               = comment[:snippet][:like_count]
+					comments.moderation_status        = comment[:snippet][:moderation_status].nil? ? :null : comment[:snippet][:moderation_status]
+					comments.published_at             = comment[:snippet][:published_at]
+					comments.updated_at               = comment[:snippet][:updated_at]
 				end
 
 				Model::CommentThread.find_or_create_by(:comment_thread_id => comment_thread[:comment_thread_id]) do |comment_threads|
-					comment_threads.kind = comment_thread[:kind]
-					comment_threads.etag = comment_thread[:etag]
-					#comment_threads.comment_thread_id = comment_thread[:comment_thread_id]
-					comment_threads.channel_id = comment_thread[:snippet][:channel_id].nil? ? :null : comment_thread[:snippet][:channel_id]
-					comment_threads.video_id = comment_thread[:snippet][:video_id]
-					comment_threads.can_reply = comment_thread[:snippet][:can_reply]
+					comment_threads.kind              = comment_thread[:kind]
+					comment_threads.etag              = comment_thread[:etag]
+					comment_threads.channel_id        = comment_thread[:snippet][:channel_id].nil? ? :null : comment_thread[:snippet][:channel_id]
+					comment_threads.video_id          = comment_thread[:snippet][:video_id]
+					comment_threads.can_reply         = comment_thread[:snippet][:can_reply]
 					comment_threads.total_reply_count = comment_thread[:snippet][:total_reply_count]
-					comment_threads.is_public = comment_thread[:snippet][:is_public]
-					comment_threads.comments_db_id = comment_db.id
+					comment_threads.is_public         = comment_thread[:snippet][:is_public]
+					comment_threads.comments_db_id    = comment_db.id
 				end
 
 			}
