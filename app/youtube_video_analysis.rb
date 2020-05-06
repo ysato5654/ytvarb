@@ -33,12 +33,22 @@ def youtube_video_analysis
 	end
 
 	# initialize
-	Ytvarb.initialize(environment, video_id)
+	begin
+		Ytvarb.initialize(environment, video_id)
+	rescue Exception => e
+		STDERR.puts "#{__FILE__}:#{__LINE__}:Error: ytvarb initialize error: #{e.message}"
+		return
+	end
 
 	youtube_comment = Ytvarb::YoutubeComment.new
 
 	# get comment from youtube video
-	unless youtube_comment.get
+	begin
+		unless youtube_comment.get
+			return
+		end
+	rescue Exception => e
+		STDERR.puts "#{__FILE__}:#{__LINE__}:Error: #{e}: need to contact the ytvarb developers"
 		return
 	end
 

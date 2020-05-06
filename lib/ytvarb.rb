@@ -3,6 +3,7 @@
 
 require 'active_record'
 
+require File.expand_path(File.dirname(__FILE__) + '/ytvarb/error')
 require File.expand_path(File.dirname(__FILE__) + '/ytvarb/configure')
 require File.expand_path(File.dirname(__FILE__) + '/ytvarb/api/cotohaha')
 require File.expand_path(File.dirname(__FILE__) + '/ytvarb/api/youtube')
@@ -22,9 +23,22 @@ module Ytvarb
 
 			Ytvarb.configure do |config|
 				config.environment = env
-				config.api_key = File.read(ROOT_PATH + '/config/api_key.txt')
-				config.client_id = File.read(ROOT_PATH + '/config/client_id.txt')
-				config.client_secret = File.read(ROOT_PATH + '/config/client_secret.txt')
+
+				# api key
+				filepath = ROOT_PATH + '/config/api_key.txt'
+				raise NotFound.new(filepath) unless File.exist?(filepath)
+				config.api_key = File.read(filepath)
+
+				# client id
+				filepath = ROOT_PATH + '/config/client_id.txt'
+				raise NotFound.new(filepath) unless File.exist?(filepath)
+				config.client_id = File.read(filepath)
+
+				# client secret
+				filepath = ROOT_PATH + '/config/client_secret.txt'
+				raise NotFound.new(filepath) unless File.exist?(filepath)
+				config.client_secret = File.read(filepath)
+
 				config.time_zone = 'Tokyo'
 
 				ActiveRecord::Base

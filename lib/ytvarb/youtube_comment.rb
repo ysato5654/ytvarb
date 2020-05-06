@@ -91,10 +91,7 @@ module Ytvarb
 				@logger.debug { "results_per_page = #{response[:page_info][:results_per_page]}" }
 
 				# create record and save
-				unless insert_comment_thread_record(response[:items])
-					status = false
-					break
-				end
+				insert_comment_thread_record(response[:items])
 
 				next_page_token = response[:next_page_token]
 
@@ -157,29 +154,37 @@ module Ytvarb
 		end
 
 		private
+
+		# Insert comment thread (response data from youtube api) to database.
+		# @param [Array] comment_thread_list
+		#   commentThread Resource
+		#
+		# @return [void]
+		#
+		# @raise [Ytvarb::ApiFormatError] An error occurred on youtube api response format
 		def insert_comment_thread_record comment_thread_list
 			comment_thread_list.each{ |comment_thread|
 
 				# rename key (:id -> :comment_thread_id)
 				if comment_thread.rename_key(old: :id, new: :comment_thread_id).nil?
-					@logger.fatal { "#{File.basename(__FILE__)}:#{__LINE__}" }
-					STDERR.puts "#{__FILE__}:#{__LINE__}:Fatal Error"
+					@logger.fatal { "#{File.basename(__FILE__)}:#{__LINE__}\ncomment_thread = #{comment_thread}" }
 
-					@logger.debug { "comment_thread = #{comment_thread}" }
-
-					return false
+					raise ApiFormatError
 				end
 
 				comment = comment_thread[:snippet][:top_level_comment]
 
+				if comment.nil?
+					@logger.fatal { "#{File.basename(__FILE__)}:#{__LINE__}\ncomment_thread = #{comment_thread}" }
+
+					raise ApiFormatError
+				end
+
 				# rename key (:id -> :comment_id)
 				if comment.rename_key(old: :id, new: :comment_id).nil?
-					@logger.fatal { "#{File.basename(__FILE__)}:#{__LINE__}" }
-					STDERR.puts "#{__FILE__}:#{__LINE__}:Fatal Error"
+					@logger.fatal { "#{File.basename(__FILE__)}:#{__LINE__}\ncomment = #{comment}" }
 
-					@logger.debug { "comment = #{comment}" }
-
-					return false
+					raise ApiFormatError
 				end
 
 				if comment[:snippet][:author_channel_id].nil?
@@ -226,8 +231,6 @@ module Ytvarb
 				end
 
 			}
-
-			return true
 		end
 	end
 end
