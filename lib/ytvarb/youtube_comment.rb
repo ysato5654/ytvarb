@@ -61,7 +61,7 @@ module Ytvarb
 				video_id = config.video_id
 			end
 
-			@logger.info { "video id = #{video_id}" }
+			@logger.info { "get youtube comment - video id = #{video_id}" }
 
 			youtube_api = Ytvarb::Api::Youtube.new(api_key, video_id)
 
